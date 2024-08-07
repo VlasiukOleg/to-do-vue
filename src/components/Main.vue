@@ -9,6 +9,7 @@ export default {
     tomorrow.setDate(today.getDate() + 1);
     const formatDate = (date) => date.toISOString().split("T")[0];
 
+    const checkbox = ref(false);
     const newTask = ref("");
     const newDate = ref(formatDate(today));
     const visibleDates = ref({});
@@ -18,24 +19,28 @@ export default {
         text: "Learn HTML and CSS",
         completed: true,
         date: "2024-07-14",
+        color: "#FF5733",
       },
       {
         id: 2,
         text: "Master React",
         completed: true,
         date: "2024-07-14",
+        color: "#33FF57",
       },
       {
         id: 3,
         text: "Build amazing apps",
         completed: true,
         date: "2024-07-15",
+        color: "#3357FF",
       },
       {
         id: 4,
         text: "Clean the room",
         completed: false,
         date: "2024-07-15",
+        color: "#F5F5F5",
       },
     ]);
 
@@ -49,6 +54,10 @@ export default {
       }, {});
     });
 
+    const todayTasks = computed(() => {
+      return tasks.value.filter((task) => task.date === today);
+    });
+
     const addTask = () => {
       if (newTask.value.trim() && newDate.value.trim()) {
         tasks.value.push({
@@ -56,6 +65,7 @@ export default {
           text: newTask.value,
           completed: false,
           date: newDate.value,
+          color: getRandomColor(),
         });
         newTask.value = "";
         newDate.value = formatDate(today);
@@ -73,21 +83,46 @@ export default {
       return date;
     };
 
+    const getRandomColor = () => {
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    };
+
     return {
+      checkbox,
       tasks,
       newTask,
       newDate,
       addTask,
       groupedTasks,
+      todayTask,
       visibleDates,
       toggleVisibility,
       formatLabel,
+      getRandomColor,
     };
   },
 };
 </script>
 
 <template>
+  <div class="text-left">
+    <q-checkbox
+      dark
+      color="white"
+      size="lg"
+      v-model="checkbox"
+      checked-icon="check_box"
+      unchecked-icon="check_box_outline_blank"
+      indeterminate-icon="help"
+      label="Today Tasks:"
+      class="custom-checkbox"
+    />
+  </div>
   <div>
     <q-input
       dark
@@ -121,8 +156,15 @@ export default {
 
     <q-slide-transition>
       <div v-show="visibleDates[date]">
-        <ul>
-          <li v-for="task in taskGroup" :key="task.id">{{ task.text }}</li>
+        <ul class="task-list">
+          <li
+            v-for="task in taskGroup"
+            :style="{ '--task-color': task.color }"
+            :key="task.id"
+            class="task-item"
+          >
+            {{ task.text }}
+          </li>
         </ul>
       </div>
     </q-slide-transition>
@@ -170,5 +212,29 @@ export default {
 
 .icon-rotate {
   transform: rotate(180deg);
+}
+
+.task-list {
+  text-align: left;
+}
+
+.task-item {
+  position: relative;
+  padding: 14px 33px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.task-item::before {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 15px;
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 40px;
+  border-radius: 3px;
+  background-color: var(--task-color);
 }
 </style>
