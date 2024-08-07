@@ -4,10 +4,13 @@ import { computed } from "vue";
 
 export default {
   setup() {
-    const today = new Date().toISOString().split("T")[0];
-    const visible = ref(false);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    const formatDate = (date) => date.toISOString().split("T")[0];
+
     const newTask = ref("");
-    const newDate = ref(today);
+    const newDate = ref(formatDate(today));
     const visibleDates = ref({});
     const tasks = ref([
       {
@@ -55,12 +58,19 @@ export default {
           date: newDate.value,
         });
         newTask.value = "";
-        newDate.value = "";
+        newDate.value = formatDate(today);
       }
     };
 
     const toggleVisibility = (date) => {
       visibleDates.value[date] = !visibleDates.value[date];
+    };
+
+    const formatLabel = (date) => {
+      if (date === formatDate(tomorrow)) {
+        return "Tomorrow";
+      }
+      return date;
     };
 
     return {
@@ -71,6 +81,7 @@ export default {
       groupedTasks,
       visibleDates,
       toggleVisibility,
+      formatLabel,
     };
   },
 };
@@ -98,10 +109,14 @@ export default {
       @keyup.enter="addTask"
     />
   </div>
+
   <div v-for="(taskGroup, date) in groupedTasks" :key="date" class="q-mb-md">
     <button type="button" @click="toggleVisibility(date)" class="dropdown-btn">
-      <span>{{ date }} Tasks</span>
-      <q-icon :name="visibleDates[date] ? 'expand_less' : 'expand_more'" />
+      <span class="dropdown-btn-text">{{ formatLabel(date) }} Tasks</span>
+      <q-icon
+        name="expand_circle_down"
+        :class="{ 'icon-rotate': visibleDates[date] }"
+      />
     </button>
 
     <q-slide-transition>
@@ -115,14 +130,14 @@ export default {
 </template>
 
 <style scoped>
-ul {
-  list-style: none;
-}
-
 .dropdown-btn {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 10px;
+
+  padding: 14px 33px;
 
   width: 100%;
   font-size: 24px;
@@ -134,7 +149,26 @@ ul {
     -8px -8px 20px 0px rgba(255, 255, 255, 0.05);
 }
 
+.dropdown-btn-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .dropdown-btn::before {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 15px;
   content: "";
+  display: inline-block;
+  width: 5px;
+  height: 40px;
+  border-radius: 3px;
+  background-color: #a9a9a9;
+}
+
+.icon-rotate {
+  transform: rotate(180deg);
 }
 </style>
