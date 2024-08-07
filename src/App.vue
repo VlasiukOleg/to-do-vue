@@ -11,9 +11,9 @@ import Header from "./components/Header.vue";
 
 <style scoped>
 .wrap {
-  max-width: 390px;
+  min-width: 390px;
   padding: 13px 20px;
   border-radius: 30px;
-  background-color: gray;
+  background-color: #222;
 }
 </style>

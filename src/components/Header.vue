@@ -1,36 +1,25 @@
 <template>
   <header>
-    <nav>
-      <ul class="nav-content">
-        <li><router-link to="/">Home</router-link></li>
-        <li><router-link to="/settings">Settings</router-link></li>
-      </ul>
+    <nav class="nav">
+      <router-link to="/" class="logo">To Do</router-link>
+      <router-link to="/settings"
+        ><img src="../assets//setting-icon.svg" alt="Settings"
+      /></router-link>
     </nav>
   </header>
 </template>
 
-<script>
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  setup() {},
-});
-</script>
+<script></script>
 
 <style scoped>
-header {
+.nav {
   display: flex;
-  justify-content: center;
-}
-.nav-content {
-  display: flex;
-  gap: 10px;
-}
-.logo-container a {
-  font-weight: 600;
+  justify-content: space-between;
+  align-items: center;
 }
 
-ul {
-  list-style: none;
+.logo {
+  font-size: 36px;
+  font-weight: bold;
 }
 </style>
