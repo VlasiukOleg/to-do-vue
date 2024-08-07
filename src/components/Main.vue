@@ -9,6 +9,7 @@ export default {
     tomorrow.setDate(today.getDate() + 1);
     const formatDate = (date) => date.toISOString().split("T")[0];
 
+    const toggle = ref(false);
     const checkbox = ref(false);
     const newTask = ref("");
     const newDate = ref(formatDate(today));
@@ -55,7 +56,7 @@ export default {
     });
 
     const todayTasks = computed(() => {
-      return tasks.value.filter((task) => task.date === today);
+      return tasks.value.filter((task) => task.date === formatDate(today));
     });
 
     const addTask = () => {
@@ -67,6 +68,7 @@ export default {
           date: newDate.value,
           color: getRandomColor(),
         });
+        console.log("Updated tasks:", tasks.value);
         newTask.value = "";
         newDate.value = formatDate(today);
       }
@@ -74,6 +76,13 @@ export default {
 
     const toggleVisibility = (date) => {
       visibleDates.value[date] = !visibleDates.value[date];
+    };
+
+    const toggleTaskCompletion = (taskId) => {
+      const task = tasks.value.find((task) => task.id === taskId);
+      if (task) {
+        task.completed = !task.completed;
+      }
     };
 
     const formatLabel = (date) => {
@@ -93,23 +102,48 @@ export default {
     };
 
     return {
+      toggle,
       checkbox,
       tasks,
       newTask,
       newDate,
       addTask,
       groupedTasks,
-      todayTask,
+      todayTasks,
       visibleDates,
       toggleVisibility,
       formatLabel,
       getRandomColor,
+      todayTasks,
+      toggleTaskCompletion,
     };
   },
 };
 </script>
 
 <template>
+  <div class="input-wrap">
+    <q-input
+      dark
+      color="grey-3"
+      label-color="orange"
+      outlined
+      v-model="newTask"
+      label="Enter task..."
+      @keyup.enter="addTask"
+    />
+    <q-input
+      dark
+      color="grey-3"
+      label-color="orange"
+      outlined
+      v-model="newDate"
+      label="Choose date"
+      type="date"
+      @keyup.enter="addTask"
+    />
+  </div>
+
   <div class="text-left">
     <q-checkbox
       dark
@@ -123,27 +157,28 @@ export default {
       class="custom-checkbox"
     />
   </div>
-  <div>
-    <q-input
-      dark
-      color="grey-3"
-      label-color="orange"
-      outlined
-      v-model="newTask"
-      label="Enter tasks..."
-      @keyup.enter="addTask"
-    />
-    <q-input
-      dark
-      color="grey-3"
-      label-color="orange"
-      outlined
-      v-model="newDate"
-      label="Enter date"
-      type="date"
-      @keyup.enter="addTask"
-    />
-  </div>
+  <q-slide-transition>
+    <div v-show="checkbox">
+      <ul class="task-list" v-if="todayTasks.length > 0">
+        <li
+          v-for="task in todayTasks"
+          :key="task.id"
+          :style="{ '--task-color': task.color }"
+          class="task-item"
+        >
+          {{ task.text }}
+          <q-toggle
+            v-model="task.completed"
+            @change="toggleTaskCompletion(task.id)"
+            checked-icon="check"
+            unchecked-icon="clear"
+            color="green"
+          />
+        </li>
+      </ul>
+      <p v-else>No tasks for today.</p>
+    </div>
+  </q-slide-transition>
 
   <div v-for="(taskGroup, date) in groupedTasks" :key="date" class="q-mb-md">
     <button type="button" @click="toggleVisibility(date)" class="dropdown-btn">
@@ -164,6 +199,13 @@ export default {
             class="task-item"
           >
             {{ task.text }}
+            <q-toggle
+              v-model="task.completed"
+              @change="toggleTaskCompletion(task.id)"
+              checked-icon="check"
+              unchecked-icon="clear"
+              color="green"
+            />
           </li>
         </ul>
       </div>
@@ -172,6 +214,12 @@ export default {
 </template>
 
 <style scoped>
+.input-wrap {
+  display: flex;
+
+  gap: 10px;
+}
+
 .dropdown-btn {
   position: relative;
   display: flex;
