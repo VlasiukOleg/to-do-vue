@@ -60,7 +60,11 @@ export default {
     ]);
 
     const groupedTasks = computed(() => {
-      const grouped = tasks.value.reduce((groups, task) => {
+      const filteredTasks = checkbox.value
+        ? tasks.value.filter((task) => task.date !== formatDate(today))
+        : tasks.value;
+
+      const grouped = filteredTasks.reduce((groups, task) => {
         if (!groups[task.date]) {
           groups[task.date] = [];
         }
