@@ -1,65 +1,28 @@
 <script>
-import { ref, computed, watchEffect, onMounted } from "vue";
-import { format } from "date-fns";
+import { ref, computed, watchEffect } from "vue";
+import { format, isToday, isTomorrow } from "date-fns";
+
+import tasksData from "../data/tasks.json";
+
+import { getRandomColor } from "../utils/getRandomColor";
+
+import TaskForm from "./TaskForm.vue";
 
 export default {
+  components: {
+    TaskForm,
+  },
   setup() {
     const today = new Date();
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
-    const formatDate = (date) => date.toISOString().split("T")[0];
+
+    const formatDate = (date) => format(date, "yyyy-MM-dd");
 
     const toggle = ref(false);
     const checkbox = ref(false);
     const newTask = ref("");
     const newDate = ref(formatDate(today));
     const visibleDates = ref({});
-    const tasks = ref(
-      JSON.parse(localStorage.getItem("tasks")) || [
-        {
-          id: 1,
-          text: "Learn HTML and CSS",
-          completed: true,
-          date: "2024-08-14",
-          color: "#FF5733",
-        },
-        {
-          id: 2,
-          text: "Master React",
-          completed: true,
-          date: "2024-08-14",
-          color: "#33FF57",
-        },
-        {
-          id: 3,
-          text: "Build amazing apps",
-          completed: true,
-          date: "2024-08-15",
-          color: "#3357FF",
-        },
-        {
-          id: 4,
-          text: "Clean the room",
-          completed: false,
-          date: "2024-08-15",
-          color: "#F5F5F5",
-        },
-        {
-          id: 5,
-          text: "Build amazing apps",
-          completed: true,
-          date: "2024-08-08",
-          color: "#3357FF",
-        },
-        {
-          id: 6,
-          text: "Clean the room",
-          completed: false,
-          date: "2024-08-08",
-          color: "#F5F5F5",
-        },
-      ]
-    );
+    const tasks = ref(JSON.parse(localStorage.getItem("tasks")) || tasksData);
 
     const groupedTasks = computed(() => {
       const filteredTasks = checkbox.value
@@ -85,21 +48,19 @@ export default {
     });
 
     const todayTasks = computed(() => {
-      return tasks.value.filter((task) => task.date === formatDate(today));
+      return tasks.value.filter((task) => isToday(new Date(task.date)));
     });
 
-    const addTask = () => {
-      if (newTask.value.trim() && newDate.value.trim()) {
+    const addTask = (task) => {
+      if (task.text.trim() && task.date.trim()) {
         tasks.value.push({
           id: Date.now(),
-          text: newTask.value,
+          text: task.text,
           completed: false,
-          date: newDate.value,
+          date: task.date,
           color: getRandomColor(),
         });
         console.log("Updated tasks:", tasks.value);
-        newTask.value = "";
-        newDate.value = formatDate(today);
       }
     };
 
@@ -115,25 +76,16 @@ export default {
     };
 
     const formatLabel = (date) => {
-      const formattedDate = format(new Date(date), "dd/MM");
-      if (date === formatDate(tomorrow)) {
+      const dateObject = new Date(date);
+      if (isTomorrow(dateObject)) {
         return "Tomorrow";
       }
-      return formattedDate;
+      return format(dateObject, "dd/MM");
     };
 
     watchEffect(() => {
       localStorage.setItem("tasks", JSON.stringify(tasks.value));
     });
-
-    const getRandomColor = () => {
-      const letters = "0123456789ABCDEF";
-      let color = "#";
-      for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
-      return color;
-    };
 
     return {
       toggle,
@@ -147,89 +99,38 @@ export default {
       visibleDates,
       toggleVisibility,
       formatLabel,
-      getRandomColor,
       todayTasks,
       toggleTaskCompletion,
+      formatDate,
     };
   },
 };
 </script>
 
 <template>
-  <div class="input-wrap">
-    <q-input
-      dark
-      color="grey-3"
-      label-color="orange"
-      outlined
-      v-model="newTask"
-      label="Enter task..."
-      @keyup.enter="addTask"
-    />
-    <q-input
-      dark
-      color="grey-3"
-      label-color="orange"
-      outlined
-      v-model="newDate"
-      label="Choose date"
-      type="date"
-      @keyup.enter="addTask"
-    />
-  </div>
+  <section>
+    <TaskForm :initialDate="formatDate(new Date())" @add-task="addTask" />
 
-  <div class="text-left">
-    <q-checkbox
-      dark
-      color="white"
-      size="lg"
-      v-model="checkbox"
-      checked-icon="check_box"
-      unchecked-icon="check_box_outline_blank"
-      indeterminate-icon="help"
-      label="Today Tasks:"
-      class="custom-checkbox"
-    />
-  </div>
-  <q-slide-transition>
-    <div v-show="checkbox">
-      <ul class="task-list" v-if="todayTasks.length > 0">
-        <li
-          v-for="task in todayTasks"
-          :key="task.id"
-          :style="{ '--task-color': task.color }"
-          class="task-item"
-        >
-          {{ task.text }}
-          <q-toggle
-            v-model="task.completed"
-            @change="toggleTaskCompletion(task.id)"
-            checked-icon="check"
-            unchecked-icon="clear"
-            color="green"
-          />
-        </li>
-      </ul>
-      <p v-else>No tasks for today.</p>
-    </div>
-  </q-slide-transition>
-
-  <div v-for="(taskGroup, date) in groupedTasks" :key="date" class="q-mb-md">
-    <button type="button" @click="toggleVisibility(date)" class="dropdown-btn">
-      <span class="dropdown-btn-text">{{ formatLabel(date) }} Tasks</span>
-      <q-icon
-        name="expand_circle_down"
-        :class="{ 'icon-rotate': visibleDates[date] }"
+    <div class="text-left">
+      <q-checkbox
+        dark
+        color="white"
+        size="lg"
+        v-model="checkbox"
+        checked-icon="check_box"
+        unchecked-icon="check_box_outline_blank"
+        indeterminate-icon="help"
+        label="Today Tasks:"
+        class="custom-checkbox"
       />
-    </button>
-
+    </div>
     <q-slide-transition>
-      <div v-show="visibleDates[date]">
-        <ul class="task-list">
+      <div v-show="checkbox">
+        <ul class="task-list" v-if="todayTasks.length > 0">
           <li
-            v-for="task in taskGroup"
-            :style="{ '--task-color': task.color }"
+            v-for="task in todayTasks"
             :key="task.id"
+            :style="{ '--task-color': task.color }"
             class="task-item"
           >
             {{ task.text }}
@@ -242,18 +143,49 @@ export default {
             />
           </li>
         </ul>
+        <p v-else>No tasks for today.</p>
       </div>
     </q-slide-transition>
-  </div>
+
+    <div v-for="(taskGroup, date) in groupedTasks" :key="date" class="q-mb-md">
+      <button
+        type="button"
+        @click="toggleVisibility(date)"
+        class="dropdown-btn"
+      >
+        <span class="dropdown-btn-text">{{ formatLabel(date) }} Tasks</span>
+        <q-icon
+          name="expand_circle_down"
+          :class="{ 'icon-rotate': visibleDates[date] }"
+        />
+      </button>
+
+      <q-slide-transition>
+        <div v-show="visibleDates[date]">
+          <ul class="task-list">
+            <li
+              v-for="task in taskGroup"
+              :style="{ '--task-color': task.color }"
+              :key="task.id"
+              class="task-item"
+            >
+              {{ task.text }}
+              <q-toggle
+                v-model="task.completed"
+                @change="toggleTaskCompletion(task.id)"
+                checked-icon="check"
+                unchecked-icon="clear"
+                color="green"
+              />
+            </li>
+          </ul>
+        </div>
+      </q-slide-transition>
+    </div>
+  </section>
 </template>
 
 <style scoped>
-.input-wrap {
-  display: flex;
-
-  gap: 10px;
-}
-
 .dropdown-btn {
   position: relative;
   display: flex;

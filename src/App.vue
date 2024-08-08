@@ -5,7 +5,9 @@ import Header from "./components/Header.vue";
 <template>
   <div class="wrap">
     <Header />
-    <router-view />
+    <main>
+      <router-view />
+    </main>
   </div>
 </template>
 

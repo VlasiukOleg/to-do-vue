@@ -3,21 +3,25 @@ import { ref, computed } from "vue";
 
 const tasks = ref(JSON.parse(localStorage.getItem("tasks")) || []);
 
-console.log(tasks);
-
-const completedTasksCount = computed(
-  () => tasks.value.filter((task) => task.completed).length
-);
-
-const incompleteTasksCount = computed(
-  () => tasks.value.filter((task) => !task.completed).length
-);
+const count = computed(() => {
+  return tasks.value.reduce(
+    (acc, task) => {
+      if (task.completed) {
+        acc.completed += 1;
+      } else {
+        acc.active += 1;
+      }
+      return acc;
+    },
+    { active: 0, completed: 0 }
+  );
+});
 </script>
 
 <template>
   <section>
-    <p>Active - {{ completedTasksCount }}</p>
-    <p>Completed - {{ incompleteTasksCount }}</p>
+    <p>Active - {{ count.active }}</p>
+    <p>Completed - {{ count.completed }}</p>
   </section>
 </template>
 
