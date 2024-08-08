@@ -1,6 +1,6 @@
 <script>
-import { ref } from "vue";
-import { computed } from "vue";
+import { ref, computed, watchEffect, onMounted } from "vue";
+import { format } from "date-fns";
 
 export default {
   setup() {
@@ -113,10 +113,11 @@ export default {
     };
 
     const formatLabel = (date) => {
+      const formattedDate = format(new Date(date), "dd/MM");
       if (date === formatDate(tomorrow)) {
         return "Tomorrow";
       }
-      return date;
+      return formattedDate;
     };
 
     const getRandomColor = () => {

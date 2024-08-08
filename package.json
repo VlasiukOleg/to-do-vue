@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@quasar/extras": "^1.16.12",
+    "date-fns": "^3.6.0",
     "quasar": "^2.16.8",
     "vue": "^3.4.31",
     "vue-router": "^4.4.3"
