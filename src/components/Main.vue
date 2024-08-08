@@ -14,50 +14,52 @@ export default {
     const newTask = ref("");
     const newDate = ref(formatDate(today));
     const visibleDates = ref({});
-    const tasks = ref([
-      {
-        id: 1,
-        text: "Learn HTML and CSS",
-        completed: true,
-        date: "2024-08-14",
-        color: "#FF5733",
-      },
-      {
-        id: 2,
-        text: "Master React",
-        completed: true,
-        date: "2024-08-14",
-        color: "#33FF57",
-      },
-      {
-        id: 3,
-        text: "Build amazing apps",
-        completed: true,
-        date: "2024-08-15",
-        color: "#3357FF",
-      },
-      {
-        id: 4,
-        text: "Clean the room",
-        completed: false,
-        date: "2024-08-15",
-        color: "#F5F5F5",
-      },
-      {
-        id: 5,
-        text: "Build amazing apps",
-        completed: true,
-        date: "2024-08-08",
-        color: "#3357FF",
-      },
-      {
-        id: 6,
-        text: "Clean the room",
-        completed: false,
-        date: "2024-08-08",
-        color: "#F5F5F5",
-      },
-    ]);
+    const tasks = ref(
+      JSON.parse(localStorage.getItem("tasks")) || [
+        {
+          id: 1,
+          text: "Learn HTML and CSS",
+          completed: true,
+          date: "2024-08-14",
+          color: "#FF5733",
+        },
+        {
+          id: 2,
+          text: "Master React",
+          completed: true,
+          date: "2024-08-14",
+          color: "#33FF57",
+        },
+        {
+          id: 3,
+          text: "Build amazing apps",
+          completed: true,
+          date: "2024-08-15",
+          color: "#3357FF",
+        },
+        {
+          id: 4,
+          text: "Clean the room",
+          completed: false,
+          date: "2024-08-15",
+          color: "#F5F5F5",
+        },
+        {
+          id: 5,
+          text: "Build amazing apps",
+          completed: true,
+          date: "2024-08-08",
+          color: "#3357FF",
+        },
+        {
+          id: 6,
+          text: "Clean the room",
+          completed: false,
+          date: "2024-08-08",
+          color: "#F5F5F5",
+        },
+      ]
+    );
 
     const groupedTasks = computed(() => {
       const filteredTasks = checkbox.value
@@ -119,6 +121,10 @@ export default {
       }
       return formattedDate;
     };
+
+    watchEffect(() => {
+      localStorage.setItem("tasks", JSON.stringify(tasks.value));
+    });
 
     const getRandomColor = () => {
       const letters = "0123456789ABCDEF";

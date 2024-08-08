@@ -1,23 +1,24 @@
-<script setup></script>
+<script setup>
+import { ref, computed } from "vue";
+
+const tasks = ref(JSON.parse(localStorage.getItem("tasks")) || []);
+
+console.log(tasks);
+
+const completedTasksCount = computed(
+  () => tasks.value.filter((task) => task.completed).length
+);
+
+const incompleteTasksCount = computed(
+  () => tasks.value.filter((task) => !task.completed).length
+);
+</script>
 
 <template>
-  <div>
-    <h1>Settings</h1>
-    <q-input filled v-model="text" label="Filled" />
-  </div>
+  <section>
+    <p>Active - {{ completedTasksCount }}</p>
+    <p>Completed - {{ incompleteTasksCount }}</p>
+  </section>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+<style scoped></style>
