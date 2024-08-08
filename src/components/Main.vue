@@ -19,39 +19,62 @@ export default {
         id: 1,
         text: "Learn HTML and CSS",
         completed: true,
-        date: "2024-07-14",
+        date: "2024-08-14",
         color: "#FF5733",
       },
       {
         id: 2,
         text: "Master React",
         completed: true,
-        date: "2024-07-14",
+        date: "2024-08-14",
         color: "#33FF57",
       },
       {
         id: 3,
         text: "Build amazing apps",
         completed: true,
-        date: "2024-07-15",
+        date: "2024-08-15",
         color: "#3357FF",
       },
       {
         id: 4,
         text: "Clean the room",
         completed: false,
-        date: "2024-07-15",
+        date: "2024-08-15",
+        color: "#F5F5F5",
+      },
+      {
+        id: 5,
+        text: "Build amazing apps",
+        completed: true,
+        date: "2024-08-08",
+        color: "#3357FF",
+      },
+      {
+        id: 6,
+        text: "Clean the room",
+        completed: false,
+        date: "2024-08-08",
         color: "#F5F5F5",
       },
     ]);
 
     const groupedTasks = computed(() => {
-      return tasks.value.reduce((groups, task) => {
+      const grouped = tasks.value.reduce((groups, task) => {
         if (!groups[task.date]) {
           groups[task.date] = [];
         }
         groups[task.date].push(task);
         return groups;
+      }, {});
+
+      const sortedDates = Object.keys(grouped).sort(
+        (a, b) => new Date(a) - new Date(b)
+      );
+
+      return sortedDates.reduce((sortedGroups, date) => {
+        sortedGroups[date] = grouped[date];
+        return sortedGroups;
       }, {});
     });
 
@@ -267,6 +290,10 @@ export default {
 }
 
 .task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
   position: relative;
   padding: 14px 33px;
   font-size: 24px;
