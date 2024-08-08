@@ -1,6 +1,7 @@
 <script>
 import { ref, computed, watchEffect } from "vue";
 import { format, isToday, isTomorrow } from "date-fns";
+import { Notify } from "quasar";
 
 import tasksData from "../data/tasks.json";
 
@@ -60,7 +61,12 @@ export default {
           date: task.date,
           color: getRandomColor(),
         });
-        console.log("Updated tasks:", tasks.value);
+        Notify.create({
+          type: "positive",
+          message: "Task added successfully!",
+          position: "top-right",
+          timeout: 2000,
+        });
       }
     };
 

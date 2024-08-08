@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
-import { Quasar } from "quasar";
+import { Quasar, Notify } from "quasar";
 
 // Import icon libraries
 import "@quasar/extras/material-icons/material-icons.css";
@@ -43,7 +43,9 @@ const myApp = createApp(App);
 
 myApp.use(router);
 myApp.use(Quasar, {
-  plugins: {},
+  plugins: {
+    Notify,
+  },
 });
 
 // Assumes you have a <div id="app"></div> in your index.html
