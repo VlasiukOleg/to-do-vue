@@ -1,9 +1,10 @@
 <script>
 import { ref, computed, watchEffect } from "vue";
+import { useTasksStore } from "../store";
+import { storeToRefs } from "pinia";
+
 import { format, isToday, isTomorrow } from "date-fns";
 import { Notify } from "quasar";
-
-import tasksData from "../data/tasks.json";
 
 import { getRandomColor } from "../utils/getRandomColor";
 
@@ -14,6 +15,7 @@ export default {
     TaskForm,
   },
   setup() {
+    const store = useTasksStore();
     const today = new Date();
 
     const formatDate = (date) => format(date, "yyyy-MM-dd");
@@ -23,7 +25,8 @@ export default {
     const newTask = ref("");
     const newDate = ref(formatDate(today));
     const visibleDates = ref({});
-    const tasks = ref(JSON.parse(localStorage.getItem("tasks")) || tasksData);
+
+    const { tasks } = storeToRefs(store);
 
     const groupedTasks = computed(() => {
       const filteredTasks = checkbox.value
