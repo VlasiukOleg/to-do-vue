@@ -1,4 +1,5 @@
 import { createApp } from "vue";
+import { createPinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 import { Quasar, Notify } from "quasar";
 
@@ -40,8 +41,10 @@ const router = createRouter({
 });
 
 const myApp = createApp(App);
+const pinia = createPinia();
 
 myApp.use(router);
+myApp.use(pinia);
 myApp.use(Quasar, {
   plugins: {
     Notify,
