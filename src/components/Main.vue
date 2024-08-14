@@ -6,8 +6,6 @@ import { storeToRefs } from "pinia";
 import { format, isToday, isTomorrow } from "date-fns";
 import { Notify } from "quasar";
 
-import { getRandomColor } from "../utils/getRandomColor";
-
 import TaskForm from "./TaskForm.vue";
 
 export default {
@@ -16,6 +14,8 @@ export default {
   },
   setup() {
     const store = useTasksStore();
+    const { addNewTask } = store;
+
     const today = new Date();
 
     const formatDate = (date) => format(date, "yyyy-MM-dd");
@@ -27,6 +27,8 @@ export default {
     const visibleDates = ref({});
 
     const { tasks } = storeToRefs(store);
+
+    console.log(tasks.value);
 
     const groupedTasks = computed(() => {
       const filteredTasks = checkbox.value
@@ -56,21 +58,13 @@ export default {
     });
 
     const addTask = (task) => {
-      if (task.text.trim() && task.date.trim()) {
-        tasks.value.push({
-          id: Date.now(),
-          text: task.text,
-          completed: false,
-          date: task.date,
-          color: getRandomColor(),
-        });
-        Notify.create({
-          type: "positive",
-          message: "Task added successfully!",
-          position: "top-right",
-          timeout: 2000,
-        });
-      }
+      addNewTask(task);
+      Notify.create({
+        type: "positive",
+        message: "Task added successfully!",
+        position: "top-right",
+        timeout: 2000,
+      });
     };
 
     const toggleVisibility = (date) => {
