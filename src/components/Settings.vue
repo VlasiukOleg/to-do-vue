@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed } from "vue";
 
+import Card from "./Card.vue";
+
 const tasks = ref(JSON.parse(localStorage.getItem("tasks")) || []);
 
 const count = computed(() => {
@@ -22,6 +24,7 @@ const count = computed(() => {
   <section>
     <p>Active - {{ count.active }}</p>
     <p>Completed - {{ count.completed }}</p>
+  
   </section>
 </template>
 

@@ -21,6 +21,7 @@ import App from "./App.vue";
 
 import Main from "./components/Main.vue";
 import Settings from "./components/Settings.vue";
+import Practice from "./components/Practice.vue";
 
 const routes = [
   {
@@ -32,6 +33,11 @@ const routes = [
     path: "/settings",
     name: "Settings",
     component: Settings,
+  },
+  {
+    path: "/practice",
+    name: "Practice",
+    component: Practice,
   },
 ];
 
