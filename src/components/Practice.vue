@@ -46,6 +46,7 @@
       <q-item-section>It's even number - {{ number }}</q-item-section>
     </q-item>
   </q-list>
+  <q-btn color="primary" icon="check" label="Привітати" @click="event" />
 </template>
 <script setup>
 import { onMounted, ref, reactive, computed } from "vue";
@@ -61,6 +62,7 @@ const count = ref(0);
 const show = ref(true);
 const firstName = ref("Oleg");
 const lastName = ref("Vlasiuk");
+const name = ref("Vue.js");
 
 const evenNumbers = computed(() =>
   numbers.value.filter((number) => number % 2 === 0)
@@ -93,6 +95,14 @@ const handleIncrement = () => {
 const publishedBooksMessage = computed(() => {
   author.books.length > 0 ? "Так" : "Ні";
 });
+
+const event = (event) => {
+  alert(`Hello ${name.value}`);
+
+  if (event) {
+    alert(event.target.tagName);
+  }
+};
 
 onMounted(() => {
   console.log(count.value);
