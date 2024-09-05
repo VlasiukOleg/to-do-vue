@@ -47,6 +47,31 @@
     </q-item>
   </q-list>
   <q-btn color="primary" icon="check" label="Привітати" @click="event" />
+  <p>Текст інпуту: {{ text }}</p>
+  <q-input v-model="text" type="text" label="Label" dark outlined />
+
+  <q-checkbox left-label v-model="orange" label="orange" />
+  <div>{{ orange }}</div>
+
+  <div>Вибрані імена: {{ checkedNames }}</div>
+
+  <input type="checkbox" id="olha" value="Ольга" v-model="checkedNames" />
+  <label for="olha">Ольга</label>
+
+  <input type="checkbox" id="dariia" value="Дарія" v-model="checkedNames" />
+  <label for="dariia">Дарія</label>
+
+  <input
+    type="checkbox"
+    id="victoria"
+    value="Вікторія"
+    v-model="checkedNames"
+  />
+  <label for="victoria">Вікторія</label>
+
+  <q-radio v-model="picked" val="Один" label="Один" />
+  <q-radio v-model="picked" val="Два" label="Два" />
+  <p>{{ picked }}</p>
 </template>
 <script setup>
 import { onMounted, ref, reactive, computed } from "vue";
@@ -63,6 +88,10 @@ const show = ref(true);
 const firstName = ref("Oleg");
 const lastName = ref("Vlasiuk");
 const name = ref("Vue.js");
+const text = ref("");
+const orange = ref(false);
+const checkedNames = ref([]);
+const picked = ref("Один");
 
 const evenNumbers = computed(() =>
   numbers.value.filter((number) => number % 2 === 0)
