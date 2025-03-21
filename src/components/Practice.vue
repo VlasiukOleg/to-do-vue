@@ -48,7 +48,7 @@
   </q-list>
   <q-btn color="primary" icon="check" label="Привітати" @click="event" />
   <p>Текст інпуту: {{ text }}</p>
-  <q-input v-model="text" type="text" label="Label" dark outlined />
+  <q-input ref="input" v-model="text" type="text" label="Label" dark outlined />
 
   <q-checkbox left-label v-model="orange" label="orange" />
   <div>{{ orange }}</div>
@@ -74,7 +74,15 @@
   <p>{{ picked }}</p>
 </template>
 <script setup>
-import { onMounted, ref, reactive, computed } from "vue";
+import {
+  onMounted,
+  onUpdated,
+  onUnmounted,
+  ref,
+  reactive,
+  computed,
+  watch,
+} from "vue";
 
 const author = reactive({
   name: "Тарас Шевченко",
@@ -92,6 +100,10 @@ const text = ref("");
 const orange = ref(false);
 const checkedNames = ref([]);
 const picked = ref("Один");
+const input = ref(null);
+
+const x = ref(0);
+const y = ref(0);
 
 const evenNumbers = computed(() =>
   numbers.value.filter((number) => number % 2 === 0)
@@ -134,7 +146,20 @@ const event = (event) => {
 };
 
 onMounted(() => {
-  console.log(count.value);
+  input.value.focus();
+  console.log("Початкове значення лічильника", count.value);
+});
+
+onUpdated(() => {
+  console.log("Компонент оновився");
+});
+
+watch(count, (newCount) => {
+  console.log(`count - це ${newCount}`);
+});
+
+onUnmounted(() => {
+  console.log("Компонент розмонтовано");
 });
 </script>
 <style>

@@ -22,6 +22,7 @@ import App from "./App.vue";
 import Main from "./components/Main.vue";
 import Settings from "./components/Settings.vue";
 import Practice from "./components/Practice.vue";
+import BybitPriceMonitoring from "./components/BybitPriceMonitoring.vue";
 
 const routes = [
   {
@@ -38,6 +39,11 @@ const routes = [
     path: "/practice",
     name: "Practice",
     component: Practice,
+  },
+  {
+    path: "/bybit",
+    name: "ByBit",
+    component: BybitPriceMonitoring,
   },
 ];
 
